@@ -1,15 +1,27 @@
-var http = require("http");
-var fs = require("fs");
-var url = require("url");
+const MongoClient = require("mongodb").MongoClient;
+const url = "mongodb://127.0.0.1:27017/directConnection=true&serverSelectionTimeoutMS=2000";
 
-http.createServer(function (req, res) {
-    fs.readFile("demo.txt", (err, data) => {
-        if (err) {
-            res.writeHead(404, { 'Content-Type': 'text/html' })
-            return res.end("404 not found")
-        }
-        res.writeHead(200, { 'Content-Type': 'text/html' })
-        res.write(data)
-        return res.end()
-    })
-}).listen(8080)
+const connect = MongoClient.connect(url, function (err, client) {
+    if (err) throw err
+    console.log("Connected Sucessfully")
+    const db = client.db("Employee")
+    var newkey = db.collection('emp').findOne({}, async (err, res) => {
+        if (err) throw err
+        console.log('fetched data sucessfully')
+        console.log(res);
+        response.firstname = await res.name;
+        response.age = await res.age;
+        response.salary = await res.Salary;
+        console.log(response)
+        client.close()
+    });
+});
+
+connect
+
+var response = {
+    firstname: "",
+    age:"",
+    salary: ""
+}
+module.exports = response;
